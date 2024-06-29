@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 
 class ApiService {
-  final String baseUrl;
-  final dio = Dio();
-  ApiService(this.baseUrl);
+  // final String baseUrl;
+  final Dio dio;
 
-  Future<dynamic> fetchTasks() async {
+  ApiService() : dio = Dio();
+
+  Future<dynamic> fetchTasks(String baseUrl) async {
     final response = await dio.get(baseUrl);
     if (response.statusCode == 200) {
       print(response.data);
@@ -15,16 +16,15 @@ class ApiService {
     }
   }
 
-  Future<void> sendResults(dynamic results) async {
+  Future<dynamic> sendResults(dynamic results, String baseUrl) async {
     final response = await dio.post(
       baseUrl,
-      queryParameters: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
       data: results,
     );
     if (response.statusCode != 200) {
       throw Exception('Failed to send results');
+    } else {
+      return response;
     }
   }
 }

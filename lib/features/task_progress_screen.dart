@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:convert';
+import '../bloc/path_bloc_bloc.dart';
 import 'results_list_screen.dart';
 
 class TaskProgressScreen extends StatefulWidget {
@@ -52,30 +54,45 @@ class _TaskProgressScreenState extends State<TaskProgressScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Виконання завдання'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            LinearProgressIndicator(value: _progress),
-            SizedBox(height: 20),
-            if (_isLoading)
-              CircularProgressIndicator()
-            else
-              ElevatedButton(
-                onPressed: _sendResults,
-                child: Text('Send results to server'),
-              ),
-            if (_errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Text(
-                  _errorMessage!,
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-          ],
+        centerTitle: true,
+        backgroundColor: Colors.blue,
+        leading: InkWell(
+          child: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.white,
+          ),
+          onTap: () {
+            Navigator.of(context).pop();
+          },
         ),
+      ),
+      body: BlocBuilder<PathBlocBloc, PathBlocState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                LinearProgressIndicator(value: _progress),
+                SizedBox(height: 20),
+                if (_isLoading)
+                  CircularProgressIndicator()
+                else
+                  ElevatedButton(
+                    onPressed: _sendResults,
+                    child: const Text('Send results to server'),
+                  ),
+                if (_errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: Text(
+                      _errorMessage!,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
