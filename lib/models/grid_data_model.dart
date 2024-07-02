@@ -4,11 +4,12 @@ class GridData {
   final Coordinate start;
   final Coordinate end;
 
-  GridData(
-      {required this.id,
-      required this.field,
-      required this.start,
-      required this.end});
+  GridData({
+    required this.id,
+    required this.field,
+    required this.start,
+    required this.end,
+  });
 
   factory GridData.fromJson(Map<String, dynamic> json) {
     return GridData(
@@ -17,6 +18,15 @@ class GridData {
       start: Coordinate.fromJson(json['start']),
       end: Coordinate.fromJson(json['end']),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'field': field,
+      'start': start.toJson(),
+      'end': end.toJson(),
+    };
   }
 }
 
@@ -33,6 +43,11 @@ class Coordinate {
   Map<String, dynamic> toJson() {
     return {'x': x, 'y': y};
   }
+
+  @override
+  String toString() {
+    return '{x: $x, y: $y}';
+  }
 }
 
 class PathResult {
@@ -47,6 +62,11 @@ class PathResult {
       'result': result.toJson(),
     };
   }
+
+  @override
+  String toString() {
+    return 'PathResult{id: $id, result: $result}';
+  }
 }
 
 class Result {
@@ -60,5 +80,10 @@ class Result {
       'steps': steps.map((step) => step.toJson()).toList(),
       'path': path,
     };
+  }
+
+  @override
+  String toString() {
+    return 'Result(steps: $steps, path: $path)';
   }
 }

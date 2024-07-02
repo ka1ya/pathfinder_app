@@ -12,86 +12,100 @@ class _UrlInputScreenState extends State<UrlInputScreen> {
   final TextEditingController _urlController = TextEditingController();
   String? _errorMessage;
   late String url;
-  PathBlocBloc pathBloc = PathBlocBloc();
 
-  void _startProcess() {
+  void _startProcess(BuildContext context) {
     url = _urlController.text;
     if (Uri.tryParse(url)?.hasAbsolutePath ?? false) {
-      pathBloc.add(FetchDataEvent(url));
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => TaskProgressScreen(apiUrl: url)),
-      );
+      context.read<PathBloc>().add(FetchDataEvent(url));
     } else {
       setState(() {
-        _errorMessage = 'Unccorect URL';
+        _errorMessage = 'Incorrect URL';
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('API URL'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 30),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              alignment: Alignment.center,
-              height: 100,
-              width: MediaQuery.of(context).size.width * 0.9,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: TextField(
-                controller: _urlController,
-                decoration: InputDecoration(
-                  labelText: 'enter API URL',
-                  errorText: _errorMessage,
-                  border: InputBorder.none,
+    return BlocProvider(
+      create: (context) => PathBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('API URL'),
+          backgroundColor: Colors.blue,
+        ),
+        body: BlocConsumer<PathBloc, PathBlocState>(
+          listener: (context, state) {
+            if (state is PathfinderLoaded) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      TaskProgressScreen(apiUrl: url, apiData: state.data),
                 ),
-              ),
-            ),
-            const Spacer(),
-            Container(
-              width: MediaQuery.of(context).size.width * 1,
-              height: 60,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: const Color.fromRGBO(244, 243, 243, 1),
-                border: Border.all(color: Colors.black),
-              ),
-              child: ElevatedButton(
-                onPressed: () {
-                  _startProcess();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 103, 179, 220),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              );
+            } else if (state is PathfinderError) {
+              setState(() {
+                _errorMessage = state.message;
+              });
+            }
+          },
+          builder: (context, state) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 30),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 10),
+                    alignment: Alignment.center,
+                    height: 100,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: TextField(
+                      controller: _urlController,
+                      decoration: InputDecoration(
+                        labelText: 'Enter API URL',
+                        errorText: _errorMessage,
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Start',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black),
-                ),
+                  const Spacer(),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 1,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: const Color.fromRGBO(244, 243, 243, 1),
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () => _startProcess(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text(
+                        'Start',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );

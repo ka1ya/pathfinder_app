@@ -29,4 +29,21 @@ class PathfinderError extends PathBlocState {
   List<Object> get props => [message];
 }
 
-class PathResultsSent extends PathBlocState {}
+class PathResultsSent extends PathBlocState {
+  final List<Map<String, dynamic>> calculatedData;
+  final dynamic responseData;
+
+  PathResultsSent(this.calculatedData, this.responseData);
+
+  @override
+  List<Object> get props => [calculatedData, responseData];
+}
+
+class PathsCalculated extends PathBlocState {
+  final List<dynamic> results;
+
+  PathsCalculated(this.results);
+
+  @override
+  List<Object> get props => [results];
+}

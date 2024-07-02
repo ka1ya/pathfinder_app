@@ -27,7 +27,7 @@ class Pathfinding {
       final path = queue.removeFirst();
       final current = path.last;
 
-      if (current == end) {
+      if (current.x == end.x && current.y == end.y) {
         final pathStr =
             path.map((coord) => '(${coord.x},${coord.y})').join('->');
         return Result(steps: path, path: pathStr);

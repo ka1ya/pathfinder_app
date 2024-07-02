@@ -17,10 +17,19 @@ class FetchDataEvent extends PathBlocEvent {
 }
 
 class SendResultsEvent extends PathBlocEvent {
-  final dynamic results;
+  final List<dynamic> results;
   final String baseUrl;
+
   SendResultsEvent(this.results, this.baseUrl);
 
   @override
   List<Object> get props => [results, baseUrl];
+}
+
+class CalculatePathsEvent extends PathBlocEvent {
+  final dynamic data;
+
+  CalculatePathsEvent(this.data);
+  @override
+  List<Object> get props => [data];
 }
